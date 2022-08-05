@@ -1,8 +1,6 @@
-from ast import Continue
 import c4d
 from c4d import gui
 
-# Main function
 
 def ObjRenamebyLayer(sel):
     

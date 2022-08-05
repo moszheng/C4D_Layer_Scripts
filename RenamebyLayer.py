@@ -8,16 +8,20 @@ def ObjRenamebyLayer(sel):
     
     doc.StartUndo()
     
-    for i in bc:
+    for i in sel:
         doc.AddUndo(c4d.UNDOTYPE_CHANGE, i)
 
+        objname = i.GetName()
         layer = i.GetLayerObject(doc)
         
         if layer == None:
             continue
 
-        
-        i.SetName(layer.GetName())
+        if 1 : #prefix_
+            i.SetName(objname + "_" + layer.GetName())
+
+        else :
+            i.SetName(layer.GetName())
 
     doc.EndUndo()
     c4d.EventAdd()

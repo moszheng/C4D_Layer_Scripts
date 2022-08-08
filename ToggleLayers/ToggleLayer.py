@@ -2,27 +2,33 @@ import c4d
 from c4d import gui
 
 PLUGIN_ID = 1059782
-PLUGIN_NAME = "Render Calculator"
+PLUGIN_NAME = "Toggle Layer"
 
 GROUP = 10000
+
+color_vector = 10009
+
 solo_check = 10001
 view_check = 10002
 render_check = 10003
 manager_check = 10004
 locked_check =  10005
+
+animation_check = 10008
 generators_check = 10006 
 expression_check = 10007
-animation_check = 10008
-color_vector = 10009
 xref_check =  10010
 
-OK = 20001
+BTN_Apply = 20001
 
 def GetSelLayer(layer):
-    selectedlayer =[]
+
+    selectedlayer = []
+
     if layer.GetBit(c4d.BIT_ACTIVE) :
         selectedlayer.append(layer)
-
+    
+    return selectedlayer
 
 def ToggleLayer(sel, data):
     
@@ -33,21 +39,35 @@ def ToggleLayer(sel, data):
     c4d.EventAdd()
 
 class OptionsDialog(gui.GeDialog):
+
     def CreateLayout(self):
 
         self.SetTitle(PLUGIN_NAME)
 
         #CheckBox
-        self.GroupBegin(GROUP, c4d.BFH_SCALEFIT, 10, 1, inith = 0)
+        self.GroupBegin(GROUP, c4d.BFH_SCALEFIT, 8, 1, inith = 0)
+        # self.AddColorField(color_vector)
+        self.AddCheckbox(solo_check)
+        self.AddCheckbox(view_check)
+        self.AddCheckbox(render_check)
+        self.AddCheckbox(manager_check)
+        self.AddCheckbox(animation_check)
+        self.AddCheckbox(generators_check)
+        self.AddCheckbox(expression_check)
+        self.AddCheckbox(xref_check)
         
         self.GroupEnd()
 
         #Apply
-        self.GroupBegin(GROUP, c4d.BFH_SCALEFIT, 2, 1, inith = 0)
+        self.GroupBegin(GROUP, c4d.BFH_SCALEFIT, 1, 1, inith = 0)
+
+        self.AddButton(BTN_Apply, c4d.BFH_SCALE, name='Refresh', inith=15)
+
         self.GroupEnd()
 
     def Command(self, id, msg):
-        if id == OK :
+
+        if id == BTN_Apply :
             #Get Selected Layer
             root = doc.GetLayerObjectRoot().GetDown()
             
@@ -59,16 +79,19 @@ class OptionsDialog(gui.GeDialog):
                 "render" : self.GetLong(render_check),
                 "manager" : self.GetLong(manager_check),
                 "locked" : self.GetLong(locked_check),
+
+                "animation" :self.GetLong(animation_check),
                 "generators" :self.GetLong(generators_check),
                 "expression" : self.GetLong(expression_check),
-                "animation" :self.GetLong(animation_check),
-                "color" : self.GetLong(color_vector),
+                
+                # "color" : self.GetLong(color_vector),
                 "xref" : self.GetLong(xref_check),
             }
+
             ToggleLayer(sellayer, data)
 
 
-class RenderCalculator(c4d.plugins.CommandData):
+class LayerToggle(c4d.plugins.CommandData):
 
     def Execute(self, doc):
         
@@ -84,7 +107,7 @@ if __name__=='__main__':
     
     c4d.plugins.RegisterCommandPlugin(  id = PLUGIN_ID, 
                                         str = PLUGIN_NAME, 
-                                        dat = RenderCalculator(),
+                                        dat = LayerToggle(),
                                         help="Calculator",
                                         info=0,
                                         icon=icon)
